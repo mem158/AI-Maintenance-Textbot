@@ -33,28 +33,23 @@ image_tracker = 0
 choice = {}
 
 #Privledges for different users based on phone number. 
-#I haven't found that to be necessary yet due to small scale. 
 mntce = []
 engineer = []
 with open ('mntce.txt', 'r') as file:
     for line in file:
         mntce.append(line.rstrip())
 
-with open ('engineer.txt', 'r') as file:
+with open('engineer.txt', 'r', encoding='utf-8-sig') as file:
     for line in file:
-        engineer.append(line.rstrip())
-print(mntce)
-print(engineer)
+        engineer.append(line.strip())
 
-# Set up credentials in keys.txt, put them in one line at a time with no quotations around them. 
+# Set up credentials in keys.txt, put them in one line at a time with no quotations around them and have their names first seperated from values with an = sign
 names = {}
-
 with open("keys.txt", "r") as file:
     lines = file.readlines()
     for line in lines:
         key, value = line.strip().split("=")
         names[key] = value
-
 # Access the variables from the config dictionary
 openai.api_key = names["api_key"]
 twilio_account_sid = names["account_sid"]
@@ -474,6 +469,7 @@ def phase_six(message, phone_number):
     nresp = eval(after_cut)
     return nresp
 
+#Logic to decide what the response is. Important to decide if both phase and phase_history should be changed, or just phase_history (determines message, outcome, affects flow.)
 def write_back(message, phone_number):
     global form_history
     global order_number
@@ -630,6 +626,11 @@ def write_back(message, phone_number):
         save_dict_to_txt(eval(form_history[phone_number]), 'completed.txt')
         response = "Everything is submitted. If you would like to attatch an image, do so one at a time."
     return response
+
+
+
+
+
 import requests
 # Define a function to handle incoming Twilio messages
 def handle_twilio_message(request):
@@ -669,18 +670,3 @@ def sms():
 
 if __name__ == '__main__':
     app.run(threaded=True, debug=True)
-
-names = {}
-
-with open("keys.txt", "r") as file:
-    lines = file.readlines()
-    for line in lines:
-        key, value = line.strip().split("=")
-        names[key] = value
-
-# Access the variables from the config dictionary
-api_key = names["api_key"]
-account_sid = names["account_sid"]
-auth_token = names["auth_token"]
-phone_number = names["phone_number"]
-model_engine = names["model_engine"]
